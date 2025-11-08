@@ -1,0 +1,1 @@
+import { DB } from "../../utils/kv.js"; export async function addQuestion(env,q){ await DB.putQ(env,q.id,q); return q; } export async function getQuestion(env,id){ return DB.getQ(env,id); } export async function listQuestions(env){ return DB.listQ(env); }

@@ -1,0 +1,1 @@
+import { listQuestions } from "../telegram/handlers/qbank.js"; export async function teacherData(env){ const ids=await listQuestions(env); return { total: ids.length, ids }; }

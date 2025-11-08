@@ -1,0 +1,4 @@
+import { wikiImageFor } from "../../services/wiki.js"; import { sendPhoto } from "../../utils/telegram.js"; import { dslToSvg, trySvgToPng } from "../../utils/render.js";
+export function wantsImage(text){ return /(تصویر|عکس|image|photo|component|قطعه)/i.test(text||""); }
+export async function wikiFetchAndSend(text,token,chatId){ let q=text.replace(/.*?(تصویر|قطعه|image|component)\s*/i,"").trim(); if(!q) q=text; const url=await wikiImageFor(q); if(!url) return false; await sendPhoto(token,chatId,url,`🔎 تصویر از ویکی‌پدیا: ${q}`); return true; }
+export async function handleSchematic(text,env){ const m=text.split(/\n/).slice(1).join("\n").trim(); const dsl=m||"R 10 10 R1\nC 60 10 C1\nWIRE 10 10 60 10"; const svg=dslToSvg(dsl,{width:600,height:400,title:"Saeed Schematic"}); const pngUrl=await trySvgToPng(svg,env); if(pngUrl) return {pngUrl}; return {svgText:svg}; }

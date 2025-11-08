@@ -1,0 +1,2 @@
+import { route } from "./router.js";
+export default { async fetch(request, env, ctx){ try{ return await route(request, env, ctx);}catch(e){ return new Response("Error: "+(e?.message||"unknown"),{status:500});} } };

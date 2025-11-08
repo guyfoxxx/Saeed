@@ -1,0 +1,1 @@
+import { cfgDump } from "../utils/kv.js"; export async function diag(env){ const providers={ openai:!!env.OPENAI_KEY, huggingface:!!env.HF_TOKEN, cloudflare:!!env.AI, openrouter:!!env.OPENROUTER_KEY }; const cfg=await cfgDump(env); return { ok:true, time:new Date().toISOString(), providers, cfgSummary:Object.keys(cfg) }; }

@@ -1,0 +1,1 @@
+export function classifyIntent(text){ const t=String(text||"").toLowerCase(); if(/\b(فرمول|formula)\b/.test(t)) return "formula"; if(/\b(مقایسه|compare|vs\b)\b/.test(t)) return "comparison"; if(/\b(طراحی|design|مدار)\b/.test(t)) return "design"; if(/\b(مفهوم|concept)\b/.test(t)) return "concept"; return "general"; }

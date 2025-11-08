@@ -1,0 +1,1 @@
+Upload this ZIP to Cloudflare Workers Dashboard → Create → Upload. Entry: src/index.js\n

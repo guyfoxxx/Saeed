@@ -1,0 +1,4 @@
+import { getCfg, setCfg, cfgDump, testProviders } from "../utils/kv.js";
+export async function adminData(env){ const cfg=await cfgDump(env); return { ok:true, env:env.ENV||"dev", name:"سعید", cfg, instructions:{ set:"POST /admin/set {key:'PROMPT', value:'...'} یا TOKENS.*", test:"POST /admin/test {task:'text'|'vision', input:'...', imageUrl?}" } }; }
+export async function adminSet(body, env){ const {key,value}=body||{}; if(!key) return {ok:false,error:"key required"}; await setCfg(env,key,String(value??"")); return {ok:true,key,value}; }
+export async function adminTest(body, env){ const {task="text",input="قانون اهم چیست؟",imageUrl}=body||{}; const out=await testProviders(env,task,input,imageUrl); return {ok:true,task,input,out}; }

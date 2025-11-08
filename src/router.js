@@ -1,0 +1,11 @@
+import { handleTelegramWebhook } from "./telegram/bot.js"; import { adminData, adminSet, adminTest } from "./dashboard/admin.js"; import { teacherData } from "./dashboard/teacher.js"; import { diag } from "./dashboard/diag.js";
+const DASHBOARD_HTML=`<!doctype html><html lang="fa"><head><meta charset="utf-8"><title>Saeed — Dashboard</title><style>:root{font-family:ui-sans-serif,system-ui,-apple-system}body{margin:24px;background:#0b0c10;color:#c5c6c7}a{color:#66fcf1;text-decoration:none}header{display:flex;gap:12px;align-items:center;margin-bottom:12px}pre{background:#1f2833;padding:12px;border-radius:8px;overflow:auto}section#nav{margin:8px 0 16px}.card{background:#1f2833;padding:16px;border-radius:10px}input,textarea,button{background:#0b0c10;color:#c5c6c7;border:1px solid #2b3a42;border-radius:8px;padding:8px}label{display:block;margin:8px 0 4px}</style></head><body><header><strong>سعید</strong> • داشبورد</header><section id="nav"><a href="#" onclick="load('/dashboard/admin');return false;">پنل ادمین</a> • <a href="#" onclick="load('/dashboard/teacher');return false;">معلم</a> • <a href="#" onclick="load('/diag');return false;">دیباگ</a></section><main class="card"><pre id="root">...</pre></main><script type="module">async function load(which){const r=await fetch(which);const d=await r.json().catch(()=>({error:true}));document.getElementById('root').textContent=JSON.stringify(d,null,2);}</script></body></html>`;
+export async function route(request, env,_ctx){ const url=new URL(request.url); const p=url.pathname;
+if(p==="/"||p==="/dashboard") return new Response(DASHBOARD_HTML,{headers:{"content-type":"text/html; charset=utf-8"}});
+if(p==="/webhook"&&request.method==="POST"){ const update=await request.json(); return handleTelegramWebhook(update, env); }
+if(p==="/dashboard/admin"&&request.method==="GET") return Response.json(await adminData(env));
+if(p==="/dashboard/teacher"&&request.method==="GET") return Response.json(await teacherData(env));
+if(p==="/diag"&&request.method==="GET") return Response.json(await diag(env));
+if(p==="/admin/set"&&request.method==="POST") return Response.json(await adminSet(await request.json(), env));
+if(p==="/admin/test"&&request.method==="POST") return Response.json(await adminTest(await request.json(), env));
+return new Response("Not found",{status:404}); }

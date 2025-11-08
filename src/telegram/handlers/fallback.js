@@ -1,0 +1,1 @@
+import { runText, runVision } from "../../models/router.js"; export async function aiAnswerText(text,env){ return runText(env,text); } export async function aiAnswerVision(imageUrl,prompt,env){ if(!imageUrl) return "تصویر دریافت نشد."; const input=`${prompt}`; return runVision(env,imageUrl,input); }
