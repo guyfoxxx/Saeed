@@ -1,0 +1,47 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Wrangler
+        run: npm i -g wrangler@3
+
+      # اختیاری: اگر می‌خوای قبل از دیپلوی سکرت‌ها ست بشن، این مرحله رو فعال بذار
+      - name: Sync Secrets to Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          wrangler secret put TELEGRAM_BOT_TOKEN --non-interactive <<< "${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          wrangler secret put OPENAI_KEY          --non-interactive <<< "${{ secrets.OPENAI_KEY }}"
+          wrangler secret put HF_TOKEN            --non-interactive <<< "${{ secrets.HF_TOKEN }}"
+          wrangler secret put OPENROUTER_KEY      --non-interactive <<< "${{ secrets.OPENROUTER_KEY }}"
+          # اختیاری‌ها:
+          if [ -n "${{ secrets.ADMIN_IDS }}" ]; then
+            wrangler secret put ADMIN_IDS --non-interactive <<< "${{ secrets.ADMIN_IDS }}"
+          fi
+          if [ -n "${{ secrets.RESVG_WASM_URL }}" ]; then
+            wrangler secret put RESVG_WASM_URL --non-interactive <<< "${{ secrets.RESVG_WASM_URL }}"
+          fi
+
+      - name: Publish Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          wrangler deploy --config wrangler.toml
